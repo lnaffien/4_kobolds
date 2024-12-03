@@ -1,15 +1,15 @@
 
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace N2I.Controllers
 {
     public interface ICrudController<T>
     {
-        ActionResult<IEnumerable<T>> Get();
-        ActionResult<T> Get(int id);
-        ActionResult<T> Post(T entity);
-        ActionResult<T> Put(int id, T entity);
-        ActionResult Delete(int id);
+        Task<ActionResult<IEnumerable<T>>> Get();
+        Task<ActionResult<T>> Get(int id);
+        Task<ActionResult<T>> Post([FromBody] T entity);
+        Task<ActionResult<T>> Put(int id, [FromBody] T entity);
+        Task<ActionResult<T>> Patch(int id, [FromBody] T entity);
+        Task<ActionResult> Delete(int id);
     }
 }
