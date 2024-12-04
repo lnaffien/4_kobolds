@@ -1,3 +1,7 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using N2I.DAL;
+
 namespace backend;
 
 public class Program
@@ -6,11 +10,21 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        // Identity
+        builder.Services.AddAuthorization();
+        builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddControllers();
+
+        // Infrastructure
+        builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("AppDb")); // For the moment, we use an in-memory database before switching to a real one
+
+
+
 
         var app = builder.Build();
 
@@ -22,7 +36,13 @@ public class Program
         }
 
         app.UseHttpsRedirection();
+        app.UseAuthentication();
+        app.UseAuthorization();
         app.MapControllers();
+
+        // Identity
+        app.MapIdentityApi<IdentityUser>();
+        app.MapSwagger().RequireAuthorization();
 
         app.Run();
     }
