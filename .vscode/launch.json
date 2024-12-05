@@ -1,0 +1,27 @@
+// How to use:
+// Ctrl + Shift + D -> Select "<name>" -> Start Debugging (F5)
+{
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Launch the Backend process and attach the debugger
+      // Required for Murugaratham.vscode-dotnet-watch extension
+      "type": "DotNetWatch", 
+      "request": "launch",
+      "name": ".NET Core Watch: Backend",
+      "project": "Backend.csproj",
+      "env": {
+          "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    {
+      // Attach to the Backend process for debugging (without launching it)
+      // You can use "dotnet: watch Backend" tasks.json to launch the Backend process
+      "name": ".NET Core Attach",
+      "type": "coreclr",
+      "request": "attach",
+      "processName": "Backend.exe"
+    } 
+  ]
+}

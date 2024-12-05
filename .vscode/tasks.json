@@ -1,0 +1,34 @@
+// How to run:
+// Ctrl + Shift + P -> Tasks: Run Task -> <label>
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "dotnet: build Backend",
+			"type": "dotnet",
+			"group": "build",
+			"task": "build",
+			"file": "${workspaceFolder}\\Backend\\Backend.csproj",
+			"problemMatcher": []
+		},
+		{
+			"label": "dotnet: watch Backend",
+			"type": "dotnet",
+			"task": "watch Backend",
+			"file": "${workspaceFolder}\\Backend\\Backend.csproj",
+			"problemMatcher": []
+		},
+		{
+			"label": "npm: start Frontend",
+			"type": "npm",
+			"script": "start",
+			"problemMatcher": []
+		},
+		{
+			"label": "npm: test Frontend",
+			"type": "npm",
+			"script": "test",
+			"problemMatcher": []
+		},
+	]
+}
