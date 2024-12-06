@@ -190,19 +190,19 @@ private showCongratsPopup(): void {
 
   private preload(): void {
     const scene = this.phaserGame.scene.getScene('default');
-    scene.load.image('column1', '../assets/sprites/exports/human/body_healthy_128x64.png');
-    scene.load.image('column1_bckgnd', '../assets/sprites/exports/human/human_background.png');
-    scene.load.image('column1_Kidney', '../assets/sprites/exports/human/kidney_healthy_64x64.png');
-    scene.load.image('column1_Heart', '../assets/sprites/exports/human/heart_healthy_64x64.png');
-    scene.load.image('column1_Lungs', '../assets/sprites/exports/human/lungs_healthy_64x64.png');
-    scene.load.image('column1_Stomac', '../assets/sprites/exports/human/stomac_healthy_64x64.png');
-    scene.load.image('column2', '../assets/sprites/exports/sea/sea_healthy_background_128x192.png');
-    scene.load.image('column3', '../assets/sprites/exports/ui/background_upgrades_64x128.png');
-    scene.load.image('separator', '../assets/sprites/exports/ui/separator_32x128.png');
-    scene.load.image('bag', '../assets/sprites/exports/sea/trashbag_64x64.png');
+    scene.load.image('column1', '/assets/sprites/exports/human/body_healthy_128x64.png');
+    scene.load.image('column1_bckgnd', '/assets/sprites/exports/human/human_background.png');
+    scene.load.image('column1_Kidney', '/assets/sprites/exports/human/kidney_healthy_64x64.png');
+    scene.load.image('column1_Heart', '/assets/sprites/exports/human/heart_healthy_64x64.png');
+    scene.load.image('column1_Lungs', '/assets/sprites/exports/human/lungs_healthy_64x64.png');
+    scene.load.image('column1_Stomac', '/assets/sprites/exports/human/stomac_healthy_64x64.png');
+    scene.load.image('column2', '/assets/sprites/exports/sea/sea_healthy_background_128x192.png');
+    scene.load.image('column3', '/assets/sprites/exports/ui/background_upgrades_64x128.png');
+    scene.load.image('separator', '/assets/sprites/exports/ui/separator_32x128.png');
+    scene.load.image('bag', '/assets/sprites/exports/sea/trashbag_64x64.png');
      // New sea assets
     // Shark sprite
-    scene.load.spritesheet('shark_saw', '../assets/sprites/exports/sea/shark_saw_spreadsheet_48x32.png', {
+    scene.load.spritesheet('shark_saw', '/assets/sprites/exports/sea/shark_saw_spreadsheet_48x32.png', {
       frameWidth: 48,
       frameHeight: 32,
     });
@@ -389,7 +389,7 @@ private showCongratsPopup(): void {
           const baseScale = scale || 1; 
           image.setPosition(columnX + columnWidth / 2 + offset.x, height / 2 + offset.y);
           image.setScale(baseScale * scaleFactor); // Use the initial baseline scaling
-          this.updateTint();
+          //this.updateTint();
         });
       }
 
@@ -460,11 +460,12 @@ private showCongratsPopup(): void {
 
     this.updateColumnsAndContents(newWidth);
   }
-  
+
   update(): void {
     if (this.chaosMode) {
       this.resizeColumns();
     }
+    this.updateTint();
   }
   private chaosMode : boolean = false;
   toggleChaosMode(): void {
