@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/pages/credits/C:/Dev/Divers/4_kobolds/frontend/src/app/pages/credits/credits.component.less"],
+  "sourcesContent": [":host {\n    display: flex;\n    flex-direction: column;\n    min-height: 100vh;\n    text-rendering: optimizeLegibility;\n    -webkit-font-smoothing: antialiased;\n    -moz-osx-font-smoothing: grayscale;\n}\n\nh1 {\n    font-size: 3em;\n    margin-bottom: 0.5em;\n}\n\nh2 {\n    font-size: 2em;\n    margin-bottom: 0.5em;\n    margin-top: 1em;\n}\n\nh3 {\n    font-size: 1.5em;\n    margin-bottom: 0.5em;\n}\n\np {\n    font-size: 1.2em;\n    margin: 0.5em 0;\n}\n\n.credits-list {\n    list-style: none;\n    padding: 0;\n}\n\n.credits-list li {\n    margin: 0.5em 0;\n}\n\n.credits-list li img {\n    width: 16px;\n    height: 16px;\n}\n\n.footer {\n    margin-top: 20em;\n    font-size: 0.8em;\n    text-align: center;\n}"],
+  "mappings": ";AAAA;AACI,WAAA;AACA,kBAAA;AACA,cAAA;AACA,kBAAA;AACA,0BAAA;AACA,2BAAA;;AAGJ;AACI,aAAA;AACA,iBAAA;;AAGJ;AACI,aAAA;AACA,iBAAA;AACA,cAAA;;AAGJ;AACI,aAAA;AACA,iBAAA;;AAGJ;AACI,aAAA;AACA,UAAA,MAAA;;AAGJ,CAAA;AACI,cAAA;AACA,WAAA;;AAGJ,CALA,aAKc;AACV,UAAA,MAAA;;AAGJ,CATA,aASc,GAAG;AACb,SAAA;AACA,UAAA;;AAGJ,CAAA;AACI,cAAA;AACA,aAAA;AACA,cAAA;;",
+  "names": []
+}
