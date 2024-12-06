@@ -10,6 +10,7 @@ import { Building } from './buildings'; // Adjust the path as needed
 export class GameComponent implements OnInit {
   private phaserGame!: Phaser.Game;
 
+  
   // Game counters
   public recycledWaste: number = 0;
   public recycledWastePerSecond: number = 0;
@@ -22,7 +23,7 @@ export class GameComponent implements OnInit {
   private readonly UPDATE_INTERVAL_MS = 25; // Update interval in milliseconds
   private readonly UPDATES_PER_SECOND = 1000 / this.UPDATE_INTERVAL_MS; // Number of updates per second
 
-  private columnWidths: number[] = [0.35, 0.35, 0.3]; // Initial percentages
+  private columnWidths: number[] = [0.2, 0.5, 0.3]; // Initial percentages
   private columnBackgrounds: Phaser.GameObjects.Image[] = [];
   private separators: Phaser.GameObjects.Image[] = [];
   private columnContents: Phaser.GameObjects.Image[][] = [[], [], []];
@@ -37,6 +38,7 @@ export class GameComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  
     this.createGame();
     window.addEventListener('resize', this.handleResize.bind(this));
 
@@ -96,7 +98,8 @@ export class GameComponent implements OnInit {
         preload: this.preload.bind(this),
         create: this.create.bind(this),
         update: this.update.bind(this)
-      }
+      },
+      pixelArt: true,
     });
   }
 
