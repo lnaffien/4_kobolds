@@ -1,0 +1,48 @@
+.homepage {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    height: calc(100vh - 200px);
+    overflow: hidden;
+}
+.content-container {
+    height: calc(100vh); // Adjust height to fit within the viewport
+    overflow-y: scroll;
+    padding-right: 10px; // Add padding to avoid scrollbar overlap
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.content-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.content-container {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.header {
+    text-align: center;
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 10px;
+}
+.introduction, .objective, .association, .inspiring-content {
+    margin: 20px 0;
+}
+.media-links {
+    margin-top: 10px;
+}
+.footer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.inspiring-content {
+    margin-bottom: 15em;
+}
+
+audio {
+    background-color: blue;
+    width: 70%;
+}
