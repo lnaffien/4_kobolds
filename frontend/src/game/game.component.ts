@@ -115,6 +115,7 @@ export class GameComponent implements OnInit {
     scene.load.image('item', 'assets/item.png');
   }
 
+  private initialColumnWidth!: number;
   private column1Images: { 
     name: string; 
     offset: { x: number; y: number }; 
@@ -122,6 +123,7 @@ export class GameComponent implements OnInit {
     scale: number; // Add this property
   }[] = [];  
 
+  private initialColumn1Width!: number;
   private create(): void {
     const scene = this.phaserGame.scene.getScene('default');
     const width = this.phaserGame.scale.width;
@@ -138,13 +140,14 @@ export class GameComponent implements OnInit {
           .setDisplaySize(columnWidth, height)
           .setDepth(-1);
         column1Background.name = 'column1_bckgnd';
+        this.initialColumn1Width = columnWidth; // Store the initial width of column 1
   
         // Add additional images for column 1
         const images = [
-          { name: 'column1_Kidney', offset: { x: 5, y: -40 }, scale: 1 },
-          { name: 'column1_Heart', offset: { x: 20, y: -100 }, scale: 1.2 },
-          { name: 'column1_Lungs', offset: { x: 5, y: -110 }, scale: 1.5 },
-          { name: 'column1_Stomac', offset: { x: -50, y: 100 }, scale: 0.8 },
+          { name: 'column1_Stomac', offset: { x: 0, y: -60 }, scale: 0.8 },
+          { name: 'column1_Kidney', offset: { x: 5, y: -20 }, scale: 1.25 },
+          { name: 'column1_Lungs', offset: { x: 5, y: -120 }, scale: 1.5 },
+          { name: 'column1_Heart', offset: { x: 10, y: -100 }, scale: 1.2 }
         ];        
   
         images.forEach((img) => {
@@ -156,9 +159,9 @@ export class GameComponent implements OnInit {
             .setOrigin(0.5, 0.5)
             .setAlpha(1)
             .setTint(0xffffff)
-            .setScale(1) // Default scale
             .setDepth(1);
           this.column1Images.push({ ...img, image });
+          image.setScale(img.scale);
         });
       }
   
@@ -187,9 +190,7 @@ export class GameComponent implements OnInit {
       this.separators.push(separator);
     }
   }
-  
-  
-
+ 
   private handleSeparatorDrag(separatorIndex: number, dragX: number, canvasWidth: number): void {
     const minColumnWidth = this.MIN_COLUMN_WIDTH_RATIO * canvasWidth;
 
@@ -241,14 +242,17 @@ export class GameComponent implements OnInit {
           column1Background.setPosition(columnX, 0);
           column1Background.setDisplaySize(columnWidth, height);
         }
-  
+
+        // Compute scaleFactor relative to the initial width
+        const scaleFactor = columnWidth / this.initialColumn1Width;
+
         this.column1Images.forEach(({ offset, image, scale }) => {
-          const baseScale = scale || 1; // Default to 1 if scale is not defined
+          const baseScale = scale || 1; 
           image.setPosition(columnX + columnWidth / 2 + offset.x, height / 2 + offset.y);
-          image.setScale((columnWidth / 800) * baseScale); // Adjust dynamically while retaining base scale
+          image.setScale(baseScale * scaleFactor); // Use the initial baseline scaling
         });
       }
-  
+
       // Update buttons for column 3
       if (index === 2) {
         const buttonsContainer = document.querySelector('.building-buttons') as HTMLElement;
@@ -270,11 +274,6 @@ export class GameComponent implements OnInit {
       separator.setPosition(separatorX, height / 2);
     });
   }
-  
-  
-  
-  
-   
 
   private handleResize(): void {
     const container = document.getElementById('game-container');
