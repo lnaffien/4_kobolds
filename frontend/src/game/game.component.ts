@@ -17,24 +17,24 @@ export class GameComponent implements OnInit {
 
   // Buildings
   public recyclingFactory: Building;
-  public placeholderBuilding1: Building;
-  public placeholderBuilding2: Building;
+  public netsmall: Building;
+  public netbig: Building;
 
   private readonly UPDATE_INTERVAL_MS = 25; // Update interval in milliseconds
   private readonly UPDATES_PER_SECOND = 1000 / this.UPDATE_INTERVAL_MS; // Number of updates per second
 
   private columnWidths: number[] = [0.2, 0.5, 0.3]; // Initial percentages
+  private readonly MAX_COLUMN1_WIDTH_RATIO = 0.2; // Max width for column 1 in percentage
+  private readonly MIN_COLUMN_WIDTH_RATIO = 0.15; // Minimum column width as 15%
   private columnBackgrounds: Phaser.GameObjects.Image[] = [];
   private separators: Phaser.GameObjects.Image[] = [];
   private columnContents: Phaser.GameObjects.Image[][] = [[], [], []];
   private scrollOffsets: number[] = [0, 0, 0]; // Horizontal scroll offsets for each column
 
-  private readonly MIN_COLUMN_WIDTH_RATIO = 0.15; // Minimum column width as 15%
-
   constructor() {
-    this.recyclingFactory = new Building(0, 1); // Costs 10, generates 1 waste/sec
-    this.placeholderBuilding1 = new Building(100, 10); // Costs 100, generates 10 wastes/sec
-    this.placeholderBuilding2 = new Building(500, 50); // Costs 500, generates 50 wastes/sec
+    this.netsmall = new Building(10, 1); // Costs 10, generates 1 waste/sec
+    this.netbig = new Building(100, 10); // Costs 100, generates 10 wastes/sec
+    this.recyclingFactory = new Building(500, 50); // Costs 500, generates 50 wastes/sec
   }
 
   ngOnInit(): void {
@@ -77,8 +77,8 @@ export class GameComponent implements OnInit {
   private recalculateRecycledWastePerSecond(): void {
     this.recycledWastePerSecond =
       this.recyclingFactory.getProduction() +
-      this.placeholderBuilding1.getProduction() +
-      this.placeholderBuilding2.getProduction();
+      this.netsmall.getProduction() +
+      this.netbig.getProduction();
   }
 
   canAfford(building: Building): boolean {

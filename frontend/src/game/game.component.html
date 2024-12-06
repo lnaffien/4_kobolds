@@ -14,32 +14,32 @@
         <button
           nz-button
           nzType="primary"
+          [disabled]="!canAfford(netsmall)"
+          [style.backgroundColor]="canAfford(netsmall) ? '#4caf50' : '#d9d9d9'"
+          [style.color]="canAfford(netsmall) ? 'white' : '#8c8c8c'"
+          (click)="buyBuilding(netsmall)"
+        >
+          Buy Net - Cost: {{ netsmall.cost }}
+        </button>
+        <button
+          nz-button
+          nzType="primary"
+          [disabled]="!canAfford(netbig)"
+          [style.backgroundColor]="canAfford(netbig) ? '#4caf50' : '#d9d9d9'"
+          [style.color]="canAfford(netbig) ? 'white' : '#8c8c8c'"
+          (click)="buyBuilding(netbig)"
+        >
+          Buy Bigger Net - Cost: {{ netbig.cost }}
+        </button>
+        <button
+          nz-button
+          nzType="primary"
           [disabled]="!canAfford(recyclingFactory)"
           [style.backgroundColor]="canAfford(recyclingFactory) ? '#4caf50' : '#d9d9d9'"
           [style.color]="canAfford(recyclingFactory) ? 'white' : '#8c8c8c'"
           (click)="buyBuilding(recyclingFactory)"
         >
-          Buy Recycling Factory - Cost: {{ recyclingFactory.cost }}
-        </button>
-        <button
-          nz-button
-          nzType="primary"
-          [disabled]="!canAfford(placeholderBuilding1)"
-          [style.backgroundColor]="canAfford(placeholderBuilding1) ? '#4caf50' : '#d9d9d9'"
-          [style.color]="canAfford(placeholderBuilding1) ? 'white' : '#8c8c8c'"
-          (click)="buyBuilding(placeholderBuilding1)"
-        >
-          Buy Placeholder Building 1 - Cost: {{ placeholderBuilding1.cost }}
-        </button>
-        <button
-          nz-button
-          nzType="primary"
-          [disabled]="!canAfford(placeholderBuilding2)"
-          [style.backgroundColor]="canAfford(placeholderBuilding2) ? '#4caf50' : '#d9d9d9'"
-          [style.color]="canAfford(placeholderBuilding2) ? 'white' : '#8c8c8c'"
-          (click)="buyBuilding(placeholderBuilding2)"
-        >
-          Buy Placeholder Building 2 - Cost: {{ placeholderBuilding2.cost }}
+          Buy recyclingFactory - Cost: {{ recyclingFactory.cost }}
         </button>
       </div>
     </div>
