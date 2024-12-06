@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/pages/welcome/welcome.component.ts", "src/app/pages/welcome/welcome.component.html", "src/app/pages/welcome/welcome.routes.ts"],
-  "sourcesContent": ["import { Component, OnInit } from '@angular/core';\r\n\r\n@Component({\r\n  selector: 'app-welcome',\r\n  standalone: true,\r\n  templateUrl: './welcome.component.html',\r\n  styleUrls: ['./welcome.component.less']\r\n})\r\nexport class WelcomeComponent implements OnInit {\r\n\r\n  constructor() { }\r\n\r\n  ngOnInit() { }\r\n\r\n}\r\n", "<p>welcome works!</p>\r\n<h1>Test</h1>\r\n\r\n<div id=\"phaser-container\"></div>", "import { Routes } from '@angular/router';\r\nimport { WelcomeComponent } from './welcome.component';\r\n\r\nexport const WELCOME_ROUTES: Routes = [\r\n  { path: '', component: WelcomeComponent },\r\n];\r\n"],
-  "mappings": ";;;;;;;;;;;AAQM,IAAO,mBAAP,MAAO,kBAAgB;EAE3B,cAAA;EAAgB;EAEhB,WAAQ;EAAK;;;uCAJF,mBAAgB;IAAA;EAAA;;yEAAhB,mBAAgB,WAAA,CAAA,CAAA,aAAA,CAAA,GAAA,YAAA,MAAA,UAAA,CAAA,6BAAA,GAAA,OAAA,GAAA,MAAA,GAAA,QAAA,CAAA,CAAA,MAAA,kBAAA,CAAA,GAAA,UAAA,SAAA,0BAAA,IAAA,KAAA;AAAA,UAAA,KAAA,GAAA;ACR7B,QAAA,yBAAA,GAAA,GAAA;AAAG,QAAA,iBAAA,GAAA,gBAAA;AAAc,QAAA,uBAAA;AACjB,QAAA,yBAAA,GAAA,IAAA;AAAI,QAAA,iBAAA,GAAA,MAAA;AAAI,QAAA,uBAAA;AAER,QAAA,oBAAA,GAAA,OAAA,CAAA;;;;;;6EDKa,kBAAgB,EAAA,WAAA,oBAAA,UAAA,kDAAA,YAAA,EAAA,CAAA;AAAA,GAAA;;;AELtB,IAAM,iBAAyB;EACpC,EAAE,MAAM,IAAI,WAAW,iBAAgB;;",
-  "names": []
-}
