@@ -6,7 +6,7 @@ import {
   ɵɵelementEnd,
   ɵɵelementStart,
   ɵɵtext
-} from "./chunk-WODYBYGZ.js";
+} from "./chunk-2GXFVVVT.js";
 
 // src/app/pages/welcome/welcome.component.ts
 var WelcomeComponent = class _WelcomeComponent {
@@ -44,4 +44,4 @@ var WELCOME_ROUTES = [
 export {
   WELCOME_ROUTES
 };
-//# sourceMappingURL=chunk-47GFOH7J.js.map
+//# sourceMappingURL=chunk-F5D5HU5S.js.map
