@@ -283,25 +283,25 @@ private showCongratsPopup(): void {
           this.bagImage.setScale(1); // Reset scale if pointer leaves the image
         });
         // Add shark sprite to column 2
-        const shark = scene.add.sprite(
-          columnX + columnWidth / 2,
-          height / 2,
-          'shark_saw'
+        this.sharkSprite = scene.add.sprite(
+          columnX + columnWidth / 2, // Position the shark in the center of column 2
+          height / 2,               // Center vertically
+          'shark_saw'               // Shark sprite
         )
-          .setOrigin(0.5, 0.5)
-          .setScale(columnWidth / 500) // Adjust scale dynamically based on column width
-          .setDepth(1); // Set depth for correct layering
+          .setOrigin(0.5, 0.5)      // Center origin
+          .setScale(columnWidth / 500) // Adjust initial scale
+          .setDepth(1);             // Set depth for proper layering
 
         // Define shark animation
         scene.anims.create({
           key: 'swim',
           frames: scene.anims.generateFrameNumbers('shark_saw', { start: 0, end: 3 }),
-          frameRate: 6, // Adjust the frame rate for smooth animation
-          repeat: -1, // Loop infinitely
+          frameRate: 6, // Adjust frame rate for smooth animation
+          repeat: -1,   // Loop infinitely
         });
 
         // Play the shark animation
-        shark.play('swim')
+        this.sharkSprite.play('swim');
       }
       
       // Add main column background
