@@ -8,28 +8,21 @@ import Phaser from 'phaser';
 })
 export class GameComponent implements OnInit {
   private phaserGame!: Phaser.Game;
-  private counter: number = 0; // Compteur de clics
-  private counterText!: Phaser.GameObjects.Text; // Texte du compteur
-  private debugBag!: Phaser.GameObjects.Image; // Bag statique
-  private net!: Phaser.GameObjects.Sprite; // Net sprite
-  private background!: Phaser.GameObjects.Image; // Image de fond
 
-  private originalBagWidth: number = 0; // Largeur originale du bag
-  private originalBagHeight: number = 0;
-  private originalNetWidth: number = 0; // Largeur originale du net
-  private originalNetHeight: number = 0;
+  private columnWidths: number[] = [0.33, 0.34, 0.33]; // Initial percentages
+  private columnBackgrounds: Phaser.GameObjects.Image[] = [];
+  private separators: Phaser.GameObjects.Image[] = [];
+  private columnContents: Phaser.GameObjects.Image[][] = [[], [], []];
+  private readonly MIN_COLUMN_WIDTH_RATIO = 0.15; // Minimum column width as 15%
 
   constructor() {}
 
   ngOnInit(): void {
     this.createGame();
-
-    // Ajoute un écouteur pour le redimensionnement
     window.addEventListener('resize', this.handleResize.bind(this));
   }
 
   ngOnDestroy(): void {
-    // Supprime l'écouteur lors de la destruction
     window.removeEventListener('resize', this.handleResize.bind(this));
   }
 
@@ -38,10 +31,10 @@ export class GameComponent implements OnInit {
 
     this.phaserGame = new Phaser.Game({
       type: Phaser.AUTO,
-      width: container?.clientWidth || window.innerWidth, // Largeur dynamique
-      height: container?.clientHeight || window.innerHeight, // Hauteur dynamique
+      width: container?.clientWidth || window.innerWidth,
+      height: container?.clientHeight || window.innerHeight,
       parent: 'game-container',
-      backgroundColor: '#9d1d1d',
+      backgroundColor: '#1d1d1d',
       scene: {
         preload: this.preload.bind(this),
         create: this.create.bind(this),
@@ -52,13 +45,11 @@ export class GameComponent implements OnInit {
 
   private preload(): void {
     const scene = this.phaserGame.scene.getScene('default');
-    // Charge les assets
-    scene.load.image('sky', 'assets/sky.png'); // Fond
-    scene.load.image('debugbag', 'assets/bag.png'); // Bag image statique
-    scene.load.spritesheet('net_32x32', 'assets/net_32x32.png', {
-      frameWidth: 32,
-      frameHeight: 32
-    }); // Net sprite
+    scene.load.image('column1', 'assets/column1.png');
+    scene.load.image('column2', 'assets/column2.png');
+    scene.load.image('column3', 'assets/column3.png');
+    scene.load.image('separator', 'assets/separator.png');
+    scene.load.image('item', 'assets/item.png');
   }
 
   private create(): void {
@@ -66,98 +57,127 @@ export class GameComponent implements OnInit {
     const width = this.phaserGame.scale.width;
     const height = this.phaserGame.scale.height;
 
-    // Ajouter le fond
-    this.background = scene.add.image(0, 0, 'sky').setOrigin(0, 0);
-    this.resizeBackground(width, height);
+    this.columnWidths.forEach((percentage, index) => {
+      const columnWidth = percentage * width;
+      const columnX = this.calculateColumnX(index, width);
 
-    // Ajouter le debug bag
-    this.debugBag = scene.add.image(width / 3, height / 2, 'debugbag')
-      .setInteractive()
-      .setScale(0.2);
+      const columnBackground = scene.add.image(columnX, 0, `column${index + 1}`)
+        .setOrigin(0, 0)
+        .setDisplaySize(columnWidth, height);
 
-    // Stocke la taille originale
-    this.originalBagWidth = this.debugBag.width;
-    this.originalBagHeight = this.debugBag.height;
+      this.columnBackgrounds.push(columnBackground);
 
-    this.debugBag.on('pointerdown', () => {
-      this.counter++;
-      this.updateCounterText();
+      const item = scene.add.image(
+        columnX + columnWidth / 2,
+        height / 2,
+        'item'
+      ).setScale(0.1);
+      this.columnContents[index].push(item);
     });
 
-    // Ajouter le net sprite
-    this.net = scene.add.sprite(2 * width / 3, height / 2, 'net_32x32', 0)
-      .setInteractive()
-      .setScale(1);
+    for (let i = 0; i < 2; i++) {
+      const separatorX = this.calculateSeparatorX(i, width);
 
-    // Stocke la taille originale
-    this.originalNetWidth = this.net.width;
-    this.originalNetHeight = this.net.height;
+      const separator = scene.add.image(separatorX, height / 2, 'separator')
+        .setInteractive()
+        .setOrigin(0.5)
+        .setDisplaySize(10, height);
 
-    // Ajouter des animations pour le net
-    scene.anims.create({
-      key: 'net_spin',
-      frames: scene.anims.generateFrameNumbers('net_32x32', { start: 0, end: 3 }),
-      frameRate: 10,
-      repeat: -1
+      scene.input.setDraggable(separator);
+
+      separator.on('drag', (pointer: Phaser.Input.Pointer, dragX: number) => {
+        this.handleSeparatorDrag(i, dragX, this.phaserGame.scale.width);
+      });
+
+      this.separators.push(separator);
+    }
+  }
+
+  private handleSeparatorDrag(separatorIndex: number, dragX: number, canvasWidth: number): void {
+    const minColumnWidth = this.MIN_COLUMN_WIDTH_RATIO * canvasWidth;
+
+    const leftColumnStart = this.calculateColumnX(separatorIndex, canvasWidth);
+    const rightColumnEnd = this.calculateColumnX(separatorIndex + 2, canvasWidth);
+
+    const clampedX = Phaser.Math.Clamp(
+      dragX,
+      leftColumnStart + minColumnWidth,
+      rightColumnEnd - minColumnWidth
+    );
+
+    const leftColumnWidth = (clampedX - leftColumnStart) / canvasWidth;
+    const rightColumnWidth = (rightColumnEnd - clampedX) / canvasWidth;
+
+    if (
+      leftColumnWidth >= this.MIN_COLUMN_WIDTH_RATIO &&
+      rightColumnWidth >= this.MIN_COLUMN_WIDTH_RATIO
+    ) {
+      this.columnWidths[separatorIndex] = leftColumnWidth;
+      this.columnWidths[separatorIndex + 1] = rightColumnWidth;
+    }
+
+    this.updateColumnsAndContents(canvasWidth);
+  }
+
+  private calculateColumnX(index: number, canvasWidth: number): number {
+    return this.columnWidths.slice(0, index).reduce((acc, w) => acc + w * canvasWidth, 0);
+  }
+
+  private calculateSeparatorX(separatorIndex: number, canvasWidth: number): number {
+    return this.calculateColumnX(separatorIndex + 1, canvasWidth);
+  }
+
+  private updateColumnsAndContents(canvasWidth: number): void {
+    const height = this.phaserGame.scale.height;
+
+    this.columnBackgrounds.forEach((column, index) => {
+      const columnX = this.calculateColumnX(index, canvasWidth);
+      const columnWidth = this.columnWidths[index] * canvasWidth;
+
+      column.setPosition(columnX, 0);
+      column.setDisplaySize(columnWidth, height);
+
+      this.columnContents[index].forEach((item) => {
+        item.setPosition(columnX + columnWidth / 2, height / 2);
+        item.setScale(columnWidth / 800);
+      });
     });
 
-    this.net.on('pointerdown', () => {
-      this.counter++;
-      this.updateCounterText();
-      this.net.play('net_spin'); // Animation sur clic
+    this.separators.forEach((separator, index) => {
+      const separatorX = this.calculateSeparatorX(index, canvasWidth);
+      separator.setPosition(separatorX, height / 2);
     });
-
-    // Ajouter le texte du compteur
-    this.counterText = scene.add.text(width - 10, 10, `Count: ${this.counter}`, {
-      fontSize: '24px',
-      color: '#ff0000',
-      fontFamily: 'Arial'
-    }).setOrigin(1, 0); // Aligner en haut à droite
   }
 
   private handleResize(): void {
     const container = document.getElementById('game-container');
-    if (container) {
-      const newWidth = container.clientWidth;
-      const newHeight = container.clientHeight;
+    if (!container) return;
 
-      // Redimensionne le canvas Phaser
-      this.phaserGame.scale.resize(newWidth, newHeight);
+    const newWidth = container.clientWidth;
+    const newHeight = container.clientHeight;
 
-      // Redimensionne les objets
-      this.resizeBackground(newWidth, newHeight);
+    this.phaserGame.scale.resize(newWidth, newHeight);
 
-      if (this.debugBag) {
-        this.debugBag.setPosition(newWidth / 3, newHeight / 2);
-        const scaleX = newWidth / this.phaserGame.scale.width;
-        const scaleY = newHeight / this.phaserGame.scale.height;
-        this.debugBag.setScale(Math.min(scaleX, scaleY) * 0.2);
+    const minWidth = this.MIN_COLUMN_WIDTH_RATIO * newWidth;
+
+    this.columnWidths = this.columnWidths.map((widthRatio) => {
+      const absoluteWidth = widthRatio * newWidth;
+      if (absoluteWidth < minWidth) {
+        return minWidth / newWidth;
       }
+      return widthRatio;
+    });
 
-      if (this.net) {
-        this.net.setPosition(2 * newWidth / 3, newHeight / 2);
-        const scaleX = newWidth / this.phaserGame.scale.width;
-        const scaleY = newHeight / this.phaserGame.scale.height;
-        this.net.setScale(Math.min(scaleX, scaleY) * 1);
-      }
-
-      if (this.counterText) {
-        this.counterText.setPosition(newWidth - 10, 10);
-      }
+    const totalWidth = this.columnWidths.reduce((sum, w) => sum + w, 0);
+    if (totalWidth > 1) {
+      const excessWidth = totalWidth - 1;
+      this.columnWidths[1] -= excessWidth;
     }
-  }
 
-  private resizeBackground(width: number, height: number): void {
-    if (this.background) {
-      this.background.setScale(width / this.background.width, height / this.background.height);
-    }
-  }
-
-  private updateCounterText(): void {
-    this.counterText.setText(`Count: ${this.counter}`);
+    this.updateColumnsAndContents(newWidth);
   }
 
   private update(): void {
-    // Logique par frame (si nécessaire)
+    // Optional update logic
   }
 }
