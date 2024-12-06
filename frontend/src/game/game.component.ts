@@ -253,9 +253,15 @@ export class GameComponent implements OnInit {
       if (index === 2) {
         const buttonsContainer = document.querySelector('.building-buttons') as HTMLElement;
         if (buttonsContainer) {
-          buttonsContainer.style.left = `${columnX + columnWidth / 2 - buttonsContainer.offsetWidth / 2}px`; // Center horizontally
-          buttonsContainer.style.top = `${height / 2 - buttonsContainer.offsetHeight / 2}px`; // Center vertically
-        }
+          const columnX = this.calculateColumnX(2, canvasWidth); // For column 3 (index 2)
+          const columnWidth = this.columnWidths[2] * canvasWidth;
+        
+          const height = this.phaserGame.scale.height;
+          // Position the container at the center of column 3
+          buttonsContainer.style.left = `${columnX + columnWidth / 2}px`;
+          buttonsContainer.style.top = `${height / 2}px`;
+          buttonsContainer.style.transform = 'translate(-50%, -50%)';
+        }        
       }
     });
   
