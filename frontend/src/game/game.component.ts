@@ -339,6 +339,24 @@ export class GameComponent implements OnInit {
 
     this.updateColumnsAndContents(newWidth);
   }
+  
+  update(): void {
+    if (this.chaosMode) {
+      this.resizeColumns();
+    }
+  }
+  private chaosMode : boolean = false;
+  toggleChaosMode(): void {
+    this.chaosMode = !this.chaosMode;
+    console.log('Chaos mode toggled:', this.chaosMode);
+  }
 
-  private update(): void {}
+  private resizeColumns(): void {
+    const totalWidth = this.phaserGame.scale.width;
+    const newColumnWidths = this.columnWidths.map(() => Math.random());
+    const sum = newColumnWidths.reduce((a, b) => a + b, 0);
+    this.columnWidths = newColumnWidths.map(width => width / sum);
+
+    this.updateColumnsAndContents(totalWidth);
+  }
 }
