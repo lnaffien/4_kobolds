@@ -104,6 +104,7 @@ export class GameComponent implements OnInit {
     const scene = this.phaserGame.scene.getScene('default');
     scene.load.image('column1', '../assets/sprites/exports/human/body_healthy_128x64.png');
     scene.load.image('column1_bckgnd', '../assets/sprites/exports/human/human_background.png');
+    scene.load.image('column3_bckgnd', '../assets/sprites/exports/human/background_upgrades_64x128.png');
     scene.load.image('column1_Kidney', '../assets/sprites/exports/human/kidney_healthy_64x64.png');
     scene.load.image('column1_Heart', '../assets/sprites/exports/human/heart_healthy_64x64.png');
     scene.load.image('column1_Lungs', '../assets/sprites/exports/human/lungs_healthy_64x64.png');
