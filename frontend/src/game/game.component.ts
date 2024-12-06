@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import Phaser from 'phaser';
+import { Building } from './buildings'; // Adjust the path as needed
 
 @Component({
   selector: 'app-game',
@@ -9,22 +10,78 @@ import Phaser from 'phaser';
 export class GameComponent implements OnInit {
   private phaserGame!: Phaser.Game;
 
-  private columnWidths: number[] = [0.33, 0.34, 0.33]; // Initial percentages
+  // Game counters
+  public recycledWaste: number = 0;
+  public recycledWastePerSecond: number = 0;
+
+  // Buildings
+  public recyclingFactory: Building;
+  public placeholderBuilding1: Building;
+  public placeholderBuilding2: Building;
+
+  private readonly UPDATE_INTERVAL_MS = 25; // Update interval in milliseconds
+  private readonly UPDATES_PER_SECOND = 1000 / this.UPDATE_INTERVAL_MS; // Number of updates per second
+
+  private columnWidths: number[] = [0.35, 0.35, 0.3]; // Initial percentages
   private columnBackgrounds: Phaser.GameObjects.Image[] = [];
   private separators: Phaser.GameObjects.Image[] = [];
   private columnContents: Phaser.GameObjects.Image[][] = [[], [], []];
+  private scrollOffsets: number[] = [0, 0, 0]; // Horizontal scroll offsets for each column
+
   private readonly MIN_COLUMN_WIDTH_RATIO = 0.15; // Minimum column width as 15%
 
-  constructor() {}
+  constructor() {
+    this.recyclingFactory = new Building(0, 1); // Costs 10, generates 1 waste/sec
+    this.placeholderBuilding1 = new Building(100, 10); // Costs 100, generates 10 wastes/sec
+    this.placeholderBuilding2 = new Building(500, 50); // Costs 500, generates 50 wastes/sec
+  }
 
   ngOnInit(): void {
     this.createGame();
     window.addEventListener('resize', this.handleResize.bind(this));
+
+    // Wait for the game container to initialize, then update the layout
+    setTimeout(() => {
+      this.updateColumnsAndContents(window.innerWidth);
+    }, 0);
+
+    setInterval(this.updateRecycledWaste.bind(this), this.UPDATE_INTERVAL_MS); // Update recycled wastes every 25ms
   }
 
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.handleResize.bind(this));
   }
+
+  private updateRecycledWaste(): void {
+    // Calculate the amount to add based on the updates per second
+    const increment = this.recycledWastePerSecond / this.UPDATES_PER_SECOND;
+    this.recycledWaste = this.recycledWaste + increment;
+  }  
+
+  get roundedRecycledWaste(): number {
+    return Math.round(this.recycledWaste);
+  }
+
+  buyBuilding(building: Building): void {
+    const result = building.buy(this.recycledWaste);
+    if (result.success) {
+      this.recycledWaste = result.newrecycledWaste;
+  
+      // Recalculate the recycledWastePerSecond after a purchase
+      this.recalculateRecycledWastePerSecond();
+    }
+  }
+  
+  private recalculateRecycledWastePerSecond(): void {
+    this.recycledWastePerSecond =
+      this.recyclingFactory.getProduction() +
+      this.placeholderBuilding1.getProduction() +
+      this.placeholderBuilding2.getProduction();
+  }
+
+  canAfford(building: Building): boolean {
+    return this.recycledWaste >= building.cost;
+  }  
 
   private createGame(): void {
     const container = document.getElementById('game-container');
@@ -45,10 +102,10 @@ export class GameComponent implements OnInit {
 
   private preload(): void {
     const scene = this.phaserGame.scene.getScene('default');
-    scene.load.image('column1', 'assets/column1.png');
-    scene.load.image('column2', 'assets/column2.png');
+    scene.load.image('column1', '../assets/sprites/exports/human/body_healthy_128x64.png');
+    scene.load.image('column2', '../assets/sprites/exports/sea/sea_healthy_background_128x192.png');
     scene.load.image('column3', 'assets/column3.png');
-    scene.load.image('separator', 'assets/separator.png');
+    scene.load.image('separator', '../assets/sprites/exports/ui/separator_32x128.png');
     scene.load.image('item', 'assets/item.png');
   }
 
@@ -66,13 +123,6 @@ export class GameComponent implements OnInit {
         .setDisplaySize(columnWidth, height);
 
       this.columnBackgrounds.push(columnBackground);
-
-      const item = scene.add.image(
-        columnX + columnWidth / 2,
-        height / 2,
-        'item'
-      ).setScale(0.1);
-      this.columnContents[index].push(item);
     });
 
     for (let i = 0; i < 2; i++) {
@@ -137,8 +187,17 @@ export class GameComponent implements OnInit {
       column.setPosition(columnX, 0);
       column.setDisplaySize(columnWidth, height);
 
+      // Update buttons container position for column 3
+      if (index === 2) {
+        const buttonsContainer = document.querySelector('.building-buttons') as HTMLElement;
+        if (buttonsContainer) {
+          buttonsContainer.style.left = `${columnX + columnWidth / 2}px`; // Center horizontally in column 3
+          buttonsContainer.style.top = `${height / 2}px`; // Center vertically
+        }
+      }
+
       this.columnContents[index].forEach((item) => {
-        item.setPosition(columnX + columnWidth / 2, height / 2);
+        item.setPosition(columnX + columnWidth / 2 - this.scrollOffsets[index], height / 2);
         item.setScale(columnWidth / 800);
       });
     });
@@ -177,7 +236,5 @@ export class GameComponent implements OnInit {
     this.updateColumnsAndContents(newWidth);
   }
 
-  private update(): void {
-    // Optional update logic
-  }
+  private update(): void {}
 }

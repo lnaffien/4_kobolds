@@ -1,1 +1,47 @@
-<div id="game-container"></div>
+<div class="game-layout">
+    <!-- Row 1: Counters -->
+    <div class="header-row">
+        <div class="info-container">
+        <div class="counter-box">Recycled Wastes: {{ roundedRecycledWaste }}</div>
+        <div class="counter-box">Per Second: {{ recycledWastePerSecond }}</div>
+        </div>
+    </div>
+  
+    <!-- Row 2: Game Container -->
+    <div id="game-container" class="game-container">
+      <!-- Buttons inside the game-container -->
+      <div class="building-buttons">
+        <button
+          nz-button
+          nzType="primary"
+          [disabled]="!canAfford(recyclingFactory)"
+          [style.backgroundColor]="canAfford(recyclingFactory) ? '#4caf50' : '#d9d9d9'"
+          [style.color]="canAfford(recyclingFactory) ? 'white' : '#8c8c8c'"
+          (click)="buyBuilding(recyclingFactory)"
+        >
+          Buy Recycling Factory - Cost: {{ recyclingFactory.cost }}
+        </button>
+        <button
+          nz-button
+          nzType="primary"
+          [disabled]="!canAfford(placeholderBuilding1)"
+          [style.backgroundColor]="canAfford(placeholderBuilding1) ? '#4caf50' : '#d9d9d9'"
+          [style.color]="canAfford(placeholderBuilding1) ? 'white' : '#8c8c8c'"
+          (click)="buyBuilding(placeholderBuilding1)"
+        >
+          Buy Placeholder Building 1 - Cost: {{ placeholderBuilding1.cost }}
+        </button>
+        <button
+          nz-button
+          nzType="primary"
+          [disabled]="!canAfford(placeholderBuilding2)"
+          [style.backgroundColor]="canAfford(placeholderBuilding2) ? '#4caf50' : '#d9d9d9'"
+          [style.color]="canAfford(placeholderBuilding2) ? 'white' : '#8c8c8c'"
+          (click)="buyBuilding(placeholderBuilding2)"
+        >
+          Buy Placeholder Building 2 - Cost: {{ placeholderBuilding2.cost }}
+        </button>
+      </div>
+    </div>
+  </div>
+  
