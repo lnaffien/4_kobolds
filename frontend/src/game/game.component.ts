@@ -103,45 +103,92 @@ export class GameComponent implements OnInit {
   private preload(): void {
     const scene = this.phaserGame.scene.getScene('default');
     scene.load.image('column1', '../assets/sprites/exports/human/body_healthy_128x64.png');
+    scene.load.image('column1_bckgnd', '../assets/sprites/exports/human/human_background.png');
+    scene.load.image('column1_Kidney', '../assets/sprites/exports/human/kidney_healthy_64x64.png');
+    scene.load.image('column1_Heart', '../assets/sprites/exports/human/heart_healthy_64x64.png');
+    scene.load.image('column1_Lungs', '../assets/sprites/exports/human/lungs_healthy_64x64.png');
+    scene.load.image('column1_Stomac', '../assets/sprites/exports/human/stomac_healthy_64x64.png');
+
     scene.load.image('column2', '../assets/sprites/exports/sea/sea_healthy_background_128x192.png');
     scene.load.image('column3', 'assets/column3.png');
     scene.load.image('separator', '../assets/sprites/exports/ui/separator_32x128.png');
     scene.load.image('item', 'assets/item.png');
   }
 
+  private column1Images: { 
+    name: string; 
+    offset: { x: number; y: number }; 
+    image: Phaser.GameObjects.Image; 
+    scale: number; // Add this property
+  }[] = [];  
+
   private create(): void {
     const scene = this.phaserGame.scene.getScene('default');
     const width = this.phaserGame.scale.width;
     const height = this.phaserGame.scale.height;
-
+  
     this.columnWidths.forEach((percentage, index) => {
       const columnWidth = percentage * width;
       const columnX = this.calculateColumnX(index, width);
-
+  
+      if (index === 0) {
+        // Add background for column 1
+        const column1Background = scene.add.image(columnX, 0, 'column1_bckgnd')
+          .setOrigin(0, 0)
+          .setDisplaySize(columnWidth, height)
+          .setDepth(-1);
+        column1Background.name = 'column1_bckgnd';
+  
+        // Add additional images for column 1
+        const images = [
+          { name: 'column1_Kidney', offset: { x: 5, y: -40 }, scale: 1 },
+          { name: 'column1_Heart', offset: { x: 20, y: -100 }, scale: 1.2 },
+          { name: 'column1_Lungs', offset: { x: 5, y: -110 }, scale: 1.5 },
+          { name: 'column1_Stomac', offset: { x: -50, y: 100 }, scale: 0.8 },
+        ];        
+  
+        images.forEach((img) => {
+          const image = scene.add.image(
+            columnX + columnWidth / 2 + img.offset.x,
+            height / 2 + img.offset.y,
+            img.name
+          )
+            .setOrigin(0.5, 0.5)
+            .setAlpha(1)
+            .setTint(0xffffff)
+            .setScale(1) // Default scale
+            .setDepth(1);
+          this.column1Images.push({ ...img, image });
+        });
+      }
+  
+      // Add main column background
       const columnBackground = scene.add.image(columnX, 0, `column${index + 1}`)
         .setOrigin(0, 0)
         .setDisplaySize(columnWidth, height);
-
       this.columnBackgrounds.push(columnBackground);
     });
-
+  
     for (let i = 0; i < 2; i++) {
       const separatorX = this.calculateSeparatorX(i, width);
-
+  
       const separator = scene.add.image(separatorX, height / 2, 'separator')
         .setInteractive()
         .setOrigin(0.5)
-        .setDisplaySize(10, height);
-
+        .setDisplaySize(10, height)
+        .setDepth(5);
+  
       scene.input.setDraggable(separator);
-
+  
       separator.on('drag', (pointer: Phaser.Input.Pointer, dragX: number) => {
         this.handleSeparatorDrag(i, dragX, this.phaserGame.scale.width);
       });
-
+  
       this.separators.push(separator);
     }
   }
+  
+  
 
   private handleSeparatorDrag(separatorIndex: number, dragX: number, canvasWidth: number): void {
     const minColumnWidth = this.MIN_COLUMN_WIDTH_RATIO * canvasWidth;
@@ -179,34 +226,49 @@ export class GameComponent implements OnInit {
 
   private updateColumnsAndContents(canvasWidth: number): void {
     const height = this.phaserGame.scale.height;
-
+  
     this.columnBackgrounds.forEach((column, index) => {
       const columnX = this.calculateColumnX(index, canvasWidth);
       const columnWidth = this.columnWidths[index] * canvasWidth;
-
+  
       column.setPosition(columnX, 0);
       column.setDisplaySize(columnWidth, height);
-
-      // Update buttons container position for column 3
+  
+      // Update images for column 1
+      if (index === 0) {
+        const column1Background = column.scene.children.getByName('column1_bckgnd') as Phaser.GameObjects.Image;
+        if (column1Background) {
+          column1Background.setPosition(columnX, 0);
+          column1Background.setDisplaySize(columnWidth, height);
+        }
+  
+        this.column1Images.forEach(({ offset, image, scale }) => {
+          const baseScale = scale || 1; // Default to 1 if scale is not defined
+          image.setPosition(columnX + columnWidth / 2 + offset.x, height / 2 + offset.y);
+          image.setScale((columnWidth / 800) * baseScale); // Adjust dynamically while retaining base scale
+        });
+      }
+  
+      // Update buttons for column 3
       if (index === 2) {
         const buttonsContainer = document.querySelector('.building-buttons') as HTMLElement;
         if (buttonsContainer) {
-          buttonsContainer.style.left = `${columnX + columnWidth / 2}px`; // Center horizontally in column 3
-          buttonsContainer.style.top = `${height / 2}px`; // Center vertically
+          buttonsContainer.style.left = `${columnX + columnWidth / 2 - buttonsContainer.offsetWidth / 2}px`; // Center horizontally
+          buttonsContainer.style.top = `${height / 2 - buttonsContainer.offsetHeight / 2}px`; // Center vertically
         }
       }
-
-      this.columnContents[index].forEach((item) => {
-        item.setPosition(columnX + columnWidth / 2 - this.scrollOffsets[index], height / 2);
-        item.setScale(columnWidth / 800);
-      });
     });
-
+  
     this.separators.forEach((separator, index) => {
       const separatorX = this.calculateSeparatorX(index, canvasWidth);
       separator.setPosition(separatorX, height / 2);
     });
   }
+  
+  
+  
+  
+   
 
   private handleResize(): void {
     const container = document.getElementById('game-container');
