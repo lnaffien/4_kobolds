@@ -104,16 +104,14 @@ export class GameComponent implements OnInit {
     const scene = this.phaserGame.scene.getScene('default');
     scene.load.image('column1', '../assets/sprites/exports/human/body_healthy_128x64.png');
     scene.load.image('column1_bckgnd', '../assets/sprites/exports/human/human_background.png');
-    scene.load.image('column3_bckgnd', '../assets/sprites/exports/human/background_upgrades_64x128.png');
     scene.load.image('column1_Kidney', '../assets/sprites/exports/human/kidney_healthy_64x64.png');
     scene.load.image('column1_Heart', '../assets/sprites/exports/human/heart_healthy_64x64.png');
     scene.load.image('column1_Lungs', '../assets/sprites/exports/human/lungs_healthy_64x64.png');
     scene.load.image('column1_Stomac', '../assets/sprites/exports/human/stomac_healthy_64x64.png');
-
     scene.load.image('column2', '../assets/sprites/exports/sea/sea_healthy_background_128x192.png');
-    scene.load.image('column3', 'assets/column3.png');
+    scene.load.image('column3', '../assets/sprites/exports/ui/background_upgrades_64x128.png');
     scene.load.image('separator', '../assets/sprites/exports/ui/separator_32x128.png');
-    scene.load.image('item', 'assets/item.png');
+    scene.load.image('bag', '../assets/sprites/exports/sea/trashbag_64x64.png');
   }
 
   private initialColumnWidth!: number;
@@ -124,6 +122,7 @@ export class GameComponent implements OnInit {
     scale: number; // Add this property
   }[] = [];  
 
+  private bagImage!: Phaser.GameObjects.Image;
   private initialColumn1Width!: number;
   private create(): void {
     const scene = this.phaserGame.scene.getScene('default');
@@ -164,8 +163,33 @@ export class GameComponent implements OnInit {
           this.column1Images.push({ ...img, image });
           image.setScale(img.scale);
         });
-      }
+      }  
   
+      if (index === 1) {
+        const bagOffset = { x: 50, y: 210 }; // Adjust the x and y offsets as needed
+
+        // Add the bag to column 2
+        this.bagImage = scene.add.image(columnX + columnWidth / 2 + bagOffset.x, height / 2 + bagOffset.y, 'bag')
+          .setOrigin(0.5, 0.5)
+          .setDepth(1)
+          .setInteractive() // Make it interactive
+          .setScale(1); // Default scale
+  
+        // Bag click effects
+        this.bagImage.on('pointerdown', () => {
+          this.bagImage.setScale(0.75); // Scale down
+        });
+  
+        this.bagImage.on('pointerup', () => {
+          this.bagImage.setScale(1); // Scale back to normal
+          this.recycledWaste += 1; // Add +1 to recycledWaste
+        });
+  
+        this.bagImage.on('pointerout', () => {
+          this.bagImage.setScale(1); // Reset scale if pointer leaves the image
+        });
+      }
+      
       // Add main column background
       const columnBackground = scene.add.image(columnX, 0, `column${index + 1}`)
         .setOrigin(0, 0)
@@ -253,6 +277,15 @@ export class GameComponent implements OnInit {
           image.setScale(baseScale * scaleFactor); // Use the initial baseline scaling
         });
       }
+
+      if (index === 1) {
+        // Update bag position and scale with offset
+        const bagOffset = { x: 50, y: 210 }; // Use the same offset defined earlier
+        if (this.bagImage) {
+          this.bagImage.setPosition(columnX + columnWidth / 2 + bagOffset.x, height / 2 + bagOffset.y);
+          this.bagImage.setScale(columnWidth / 800); // Adjust scale dynamically
+        }
+      }      
 
       // Update buttons for column 3
       if (index === 2) {
