@@ -3,9 +3,10 @@ import Phaser from 'phaser';
 import { Building } from './buildings'; // Adjust the path as needed
 
 @Component({
-  selector: 'app-game',
-  templateUrl: './game.component.html',
-  styleUrls: ['./game.component.less']
+    selector: 'app-game',
+    templateUrl: './game.component.html',
+    styleUrls: ['./game.component.less'],
+    standalone: false
 })
 export class GameComponent implements OnInit {
   private phaserGame!: Phaser.Game;
